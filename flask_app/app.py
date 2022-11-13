@@ -45,11 +45,9 @@ def exchange_rate():
 
     with urlopen(URL) as r:
         text = r.read()
-    return text
-    exchange_rates = json.loads(text)
 
-    LOG.info(f"JSON exchange_rates: \n{exchange_rates}")
-    return exchange_rates
+    LOG.info(f"JSON exchange_rates: \n{text}")
+    return text
 
 if __name__ == "__main__":
     LOG.info('START Flask')
