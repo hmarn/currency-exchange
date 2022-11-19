@@ -2,11 +2,11 @@ FROM python:3.7.3-stretch
 
 ## Step 1:
 # Create a working directory
-WORKDIR /app
+WORKDIR /api
 
 ## Step 2:
 # Copy source code to working directory
-COPY . flask_app/app.py /app/
+COPY . app.py /api/
 
 ## Step 3:
 # Install packages from requirements.txt
