@@ -12,4 +12,4 @@ docker image ls
 
 # Step 3: 
 # Run flask app
-docker run -p 5000 currency-exchange-web
+docker run -p 3000:3000 currency-exchange-web

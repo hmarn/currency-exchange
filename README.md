@@ -24,5 +24,13 @@ Buid only,
 Buid and run, (if there were any changes in docker config, rebuild also same command)
 > docker-compose up --build
 
+Browse API
+http://0.0.0.0:8000
+
+Browse Frontend
+http://0.0.0.0:3000
+
+
+
 
 

@@ -8,10 +8,10 @@ services:
     environment:
       FLASK_ENV: development
   web:
-    build: ./frontend
+    build: ./client
     ports:
-      - "5000:5000"
+      - "3000:3000"
     volumes:
-      - ./frontend:/usr/src/app
+      - ./client:/app
     depends_on:
       - api
