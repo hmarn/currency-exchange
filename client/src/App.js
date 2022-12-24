@@ -1,24 +1,34 @@
+import React, { useEffect, useState } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col } from 'react-bootstrap';
+import CurrencyTable from './utils/CurrencyTable';
+import CurrencyConverter from './utils/CurrencyConverter';
+import axios from 'axios';
 
-function App() {
+const App = () => {
+  const [data, setData] = useState([]);
+  const url = 'http://localhost:8000/exchange_rate';
+
+  useEffect(() => {
+    axios.get(url).then((response) => {
+      setData(response.data);
+    })
+    .catch((error) => console.error(`Error: ${error}`));
+  }, []);
+
   return (
     <div className="App">
       <Container>
         <Row>
-          <Col>
+          <Col className='header'>
             <h1>Currency Exchange</h1>
           </Col>
         </Row>
-        <Row>
-          <Col>
-            <p>You Send :</p>
-          </Col>
-          <Col>
-            <p>Recipient Get :</p>
-          </Col>
-        </Row>
+
+        { data.length !== 0 && <CurrencyConverter data={data} /> }
+
+        { data.length !== 0 && <CurrencyTable rates={data.rates} /> }
       </Container>
     </div>
   );
