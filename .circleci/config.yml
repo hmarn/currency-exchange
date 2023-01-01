@@ -7,11 +7,9 @@ version: 2
 jobs: 
   build-backend:
     docker:
-      # Use the same Docker base as the project
+      # Use the same Docker base as the ./flask_app/Dockerfile
       - image: python:3.7.3-stretch 
-
     working_directory: ~/repo
-
     steps:
       - checkout
 
@@ -21,7 +19,6 @@ jobs:
             - v1-dependencies-{{ checksum "./flask_app/requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
-
       - run:
           name: install dependencies
           command: |
@@ -32,22 +29,39 @@ jobs:
             # Install hadolint
             wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v1.16.3/hadolint-Linux-x86_64 &&\
             chmod +x /bin/hadolint
-
       - save_cache:
           paths:
             - ./venv
           key: v1-dependencies-{{ checksum "./flask_app/requirements.txt" }}
-
-      # run lint!
       - run:
           name: run lint
           command: |
             cd ./flask_app/
             . venv/bin/activate
-            make lint 
+            make lint
+
+  build-frontend:
+    docker:
+      # Use the same Node base as ./client/Dockerfile
+      - image: cimg/node:14.19.0
+    steps:
+      - checkout
+      - restore_cache:
+          key: frontend-build-{{ checksum "./client/package-lock.json" }}
+      - run:
+          name: Build front-end
+          command: |
+            cd ./client
+            sudo npm install
+            npm run build
+      - save_cache:
+          paths: [./frontend/node_modules]
+          key: frontend-build-{{ checksum "./client/package-lock.json" }}
+
 
 workflows:
   version: 2
   default:
     jobs:
       - build-backend
+      - build-frontend
