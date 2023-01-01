@@ -5,7 +5,7 @@
 version: 2
 
 jobs: 
-  build:
+  build-backend:
     docker:
       # Use the same Docker base as the project
       - image: python:3.7.3-stretch 
@@ -18,13 +18,14 @@ jobs:
       # Download and cache dependencies
       - restore_cache:
           keys:
-            - v1-dependencies-{{ checksum "requirements.txt" }}
+            - v1-dependencies-{{ checksum "./flask_app/requirements.txt" }}
             # fallback to using the latest cache if no exact match is found
             - v1-dependencies-
 
       - run:
           name: install dependencies
           command: |
+            cd ./flask_app/
             python3 -m venv venv
             . venv/bin/activate
             make install
@@ -35,11 +36,18 @@ jobs:
       - save_cache:
           paths:
             - ./venv
-          key: v1-dependencies-{{ checksum "requirements.txt" }}
+          key: v1-dependencies-{{ checksum "./flask_app/requirements.txt" }}
 
       # run lint!
       - run:
           name: run lint
           command: |
+            cd ./flask_app/
             . venv/bin/activate
             make lint 
+
+workflows:
+  version: 2
+  default:
+    jobs:
+      - build-backend
