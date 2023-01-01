@@ -5,12 +5,20 @@
 ### How to run
 
 #### Run backend seperately
+
+Python Flask app for backend APIs.
+
 ```
 cd flask_app/
 ./run_docker.sh
 ```
 
 #### Run frontend seperately
+
+Node: 14.19.0
+React16
+Enzyme + Jest
+
 ```
 cd frontend/
 ./run_docker.sh
@@ -25,10 +33,10 @@ Buid and run, (if there were any changes in docker config, rebuild also same com
 > docker-compose up --build
 
 Browse API
-http://0.0.0.0:8000
+http://localhost:8000/exchange_rate
 
 Browse Frontend
-http://0.0.0.0:3000
+http://localhost:3000
 
 
 
