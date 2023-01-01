@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Form } from 'react-bootstrap';
 
@@ -27,6 +28,14 @@ const SelectBox = (props) => {
         }
     </Form.Select>
   );
+};
+
+SelectBox.propTypes = {
+  label: PropTypes.string,
+  options: PropTypes.array,
+  onChangeHandler: PropTypes.func,
+  groupKey: PropTypes.string,
+  defaultValue: PropTypes.string
 };
 
 export default SelectBox;

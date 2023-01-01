@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { Row, Col, Button } from 'react-bootstrap';
-import './CurrencyConverter.css';
+import { Row, Col } from 'react-bootstrap';
+import './index.css';
 import moment from 'moment';
-import SelectBox from './SelectBox';
+import SelectBox from '../../utils/SelectBox';
 
 const CurrencyConverter = (props) => {
   const { timestamp, rates, base } = props.data;
@@ -13,9 +14,6 @@ const CurrencyConverter = (props) => {
   const [hostAmount, setHostAmount] = useState(rates[hostCurrency]);
   const [destinationCurrency, setDestinationCurrency] = useState('SGD');
   const [destinationAmount, setDestinationAmount] = useState(rates[destinationCurrency]);
-
-  const handleOnSubmit = () => {
-  };
 
   const converter = ({fromCurrency, fromAmount, toCurrency }) => {
     const baseAmount = (fromAmount / rates[fromCurrency]) * rates[base];
@@ -69,7 +67,7 @@ const CurrencyConverter = (props) => {
     <div className='converterBox'>
       <Row className='converterRow'>
         <Col md={4} xs={1}>
-          <p class='dataInfo'>Updated at: { updatedDate }</p>
+          <p className='dataInfo'>Updated at: { updatedDate }</p>
         </Col>
       </Row>
 
@@ -97,14 +95,16 @@ const CurrencyConverter = (props) => {
           <input className='inputBox form-control' disabled type='number' name='destinationAmount' value={destinationAmount}/>
         </Col>
       </Row>
-      {/* <Row>
-        <Col md={{ span: 6, offset: 3 }}>
-          <Button variant="primary" onClick={handleOnSubmit()} className='convertButton'> Convert </Button>
-        </Col>
-      </Row> */}
-    
     </div>
   );
+};
+
+CurrencyConverter.propTypes = {
+  data: PropTypes.instanceOf({
+    timestamp: PropTypes.any,
+    rates: PropTypes.array,
+    base: PropTypes.string
+  })
 };
 
 export default CurrencyConverter;

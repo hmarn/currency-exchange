@@ -2,9 +2,11 @@ from flask import Flask, json
 from flask.logging import create_logger
 from markupsafe import escape
 from urllib.request import urlopen
+from flask_cors import CORS
 import logging
 
 app = Flask(__name__)
+CORS(app)
 LOG = create_logger(app)
 LOG.setLevel(logging.INFO)
 
@@ -46,8 +48,13 @@ def exchange_rate():
     with urlopen(URL) as r:
         text = r.read()
 
-    LOG.info(f"JSON exchange_rates: \n{text}")
-    return text
+    data = app.response_class(
+            response=text,
+            status=200,
+            mimetype='application/json'
+    )
+    LOG.info(f"JSON exchange_rates: \n{data}")
+    return data
 
 if __name__ == "__main__":
     LOG.info('START Flask')

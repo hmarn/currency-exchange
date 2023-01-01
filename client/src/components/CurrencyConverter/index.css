@@ -15,8 +15,15 @@
   justify-content: center;
 }
 
+.dropdown-menu > li > a:hover,
+.dropdown-menu > li > a:focus,
+.form-control:focus {
+  color: whitesmoke !important;
+  background-color: rgb(199, 117, 145) !important;
+}
+
 .converterBox h3 {
-  text-align: left;
+  text-align: center;
 }
 
 .selectBox {

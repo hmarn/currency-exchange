@@ -1,8 +1,16 @@
-import { render, screen } from '@testing-library/react';
-import App from './App';
+import React from 'react'
+import Enzyme, { shallow } from 'enzyme'
+import Adapter from 'enzyme-adapter-react-16'
+import App from './App'
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
-  expect(linkElement).toBeInTheDocument();
+Enzyme.configure({ adapter: new Adapter() });
+
+describe('App', () => {
+  const wrapper = shallow(<App />)
+
+  it('should render header', () => {
+    const buttonElement  = wrapper.find('h1');
+    expect(buttonElement).toHaveLength(1);
+    expect(buttonElement.text()).toEqual('Currency Exchange');
+  });
 });

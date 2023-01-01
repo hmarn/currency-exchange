@@ -1,3 +1,12 @@
 .App {
   text-align: center;
 }
+
+.App h1 {
+  margin: 1rem 0;
+}
+
+.currencyRateTable.table > thead {
+  background-color: lightpink;
+  color: white;
+}

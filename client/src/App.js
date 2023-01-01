@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Container, Row, Col } from 'react-bootstrap';
-import CurrencyTable from './utils/CurrencyTable';
-import CurrencyConverter from './utils/CurrencyConverter';
+import CurrencyTable from './components/CurrencyTable';
+import CurrencyConverter from './components/CurrencyConverter';
 import axios from 'axios';
 
 const App = () => {

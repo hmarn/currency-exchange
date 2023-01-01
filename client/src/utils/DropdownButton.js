@@ -1,9 +1,10 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Dropdown } from 'react-bootstrap';
 
 const DropdownButton = (props) => {
-  const { label, options, onChangeHandler, noOption, groupKey } = props;
+  const { label, options, onChangeHandler, groupKey } = props;
 
   return (
     <Dropdown>
@@ -12,7 +13,6 @@ const DropdownButton = (props) => {
       </Dropdown.Toggle>
 
       <Dropdown.Menu>
-        { noOption && <Dropdown.Item > '--' </Dropdown.Item> }
         { options.map((key) => {
             return (
               <Dropdown.Item
@@ -28,6 +28,13 @@ const DropdownButton = (props) => {
       </Dropdown.Menu>
     </Dropdown>
   );
+};
+
+DropdownButton.propTypes = {
+  label: PropTypes.string,
+  options: PropTypes.array,
+  onChangeHandler: PropTypes.func,
+  groupKey: PropTypes.string
 };
 
 export default DropdownButton;
