@@ -88,6 +88,38 @@ jobs:
             sudo npm install
             npm run lint
 
+  deploy-infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Ensure web-app infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/infrastructure.yml \
+              --tags project=currency-exchange \
+              --stack-name stack-create-${CIRCLE_WORKFLOW_ID:0:7} \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+      - run:
+          name: Add web-app ip to ansible inventory
+          command: |
+            aws cloudformation \
+            list-exports \
+            --query "Exports[?Name==\`currency-exchange-${CIRCLE_WORKFLOW_ID:0:7}\`].Value" \
+            --output text >> ~/project/.circleci/ansible/inventory.txt
+
+            echo "List Inventory:"
+            cat ~/project/.circleci/ansible/inventory.txt
+            echo "End!!!"
+      - run:
+          name: Installing Tar
+          command: yum install -y tar gzip
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - project/.circleci/ansible/inventory.txt
+          
 workflows:
   version: 2
   default:
@@ -100,4 +132,8 @@ workflows:
       - eslint-frontend:
           requires:
             - build-frontend
-      
+      - deploy-infrastructure:
+          requires: [test-frontend, eslint-frontend, build-backend]
+          filters:
+            branches:
+              only: [test-infra]
