@@ -6,12 +6,12 @@ import CurrencyTable from './components/CurrencyTable';
 import CurrencyConverter from './components/CurrencyConverter';
 import axios from 'axios';
 
+const URL = 'http://localhost:8000/exchange_rate';  
 const App = () => {
   const [data, setData] = useState([]);
-  const url = 'http://localhost:8000/exchange_rate';
 
   useEffect(() => {
-    axios.get(url).then((response) => {
+    axios.get(URL).then((response) => {
       setData(response.data);
     })
     .catch((error) => console.error(`Error: ${error}`));

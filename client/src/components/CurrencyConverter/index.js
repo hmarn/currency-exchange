@@ -8,7 +8,7 @@ import SelectBox from '../../utils/SelectBox';
 
 const CurrencyConverter = (props) => {
   const { timestamp, rates, base } = props.data;
-  const updatedDate = moment(timestamp).format("MMM Do YY"); 
+  const updatedDate = moment.unix(timestamp).format('dddd, MMMM Do, YYYY h:mm:ss A');
   const currencyCodes =  Object.keys(rates);
   const [hostCurrency, setHostCurrency] = useState(base);
   const [hostAmount, setHostAmount] = useState(rates[hostCurrency]);
@@ -66,8 +66,8 @@ const CurrencyConverter = (props) => {
   return (
     <div className='converterBox'>
       <Row className='converterRow'>
-        <Col md={4} xs={1}>
-          <p className='dataInfo'>Updated at: { updatedDate }</p>
+        <Col md={12} xs={1}>
+          <p className='dataInfo'>Updated at: <b>{ updatedDate }</b> </p>
         </Col>
       </Row>
 
