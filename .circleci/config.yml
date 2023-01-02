@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  aws-eks: circleci/aws-eks@1.0.0
+  aws-eks: circleci/aws-eks@2.2.0
   kubernetes: circleci/kubernetes@0.11.1
   
 jobs:
@@ -16,14 +16,14 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Ensure VPC exist
+          name: Ensure VPC exist for EKS cluster
           command: |
             aws ec2 \
               --output text \
               --query 'Vpcs[*].{VpcId:VpcId,Name:Tags[?Key==`Name`].Value|[0],CidrBlock:CidrBlock}' \
               describe-vpcs
       - run:
-          name: Ensure IAM Roles exist
+          name: Ensure IAM Roles exist for EKS cluster
           command: |
             aws iam get-role \
               --role-name << parameters.cluster-role-name >>
