@@ -50,6 +50,8 @@ workflows:
     jobs:
       - build-infrastructure:
           cluster-role-name: $IAM_ROLE_NAME
+      - aws-eks/delete-cluster:
+          cluster-name: demo-cluster-01
       - aws-eks/create-cluster:
           cluster-name: demo-cluster-02
       - test-cluster:
