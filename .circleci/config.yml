@@ -51,9 +51,8 @@ workflows:
       - build-infrastructure:
           cluster-role-name: $IAM_ROLE_NAME
       - aws-eks/create-cluster:
-          cluster-name: demo-cluster-01
-
-      # - test-cluster:
-      #     cluster-name: demo-cluster-01
-      #     requires:
-      #       - aws-eks/create-cluster
+          cluster-name: demo-cluster-02
+      - test-cluster:
+          cluster-name: demo-cluster-02
+          requires:
+            - aws-eks/create-cluster
