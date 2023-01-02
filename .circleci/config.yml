@@ -2,7 +2,7 @@ version: 2.2
 
 orbs:
   aws-eks: circleci/aws-eks@2.2.0
-  kubernetes: circleci/kubernetes@0.11.1
+  kubernetes: circleci/kubernetes@1.3
   
 jobs:
   build-infrastructure:
@@ -51,8 +51,9 @@ workflows:
       - build-infrastructure:
           cluster-role-name: $IAM_ROLE_NAME
       - aws-eks/create-cluster:
-          cluster-name: demo-cluster-01
           cfn-role-arn: $IAM_ROLE_ARN
+          cluster-name: demo-cluster-01
+
       # - test-cluster:
       #     cluster-name: demo-cluster-01
       #     requires:
