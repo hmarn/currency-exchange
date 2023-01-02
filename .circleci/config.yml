@@ -1,139 +1,59 @@
-# Python CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-python/ for more details
-#
-version: 2
+version: 2.1
 
-jobs: 
-  build-backend:
-    docker:
-      # Use the same Docker base as the ./flask_app/Dockerfile
-      - image: python:3.7.3-stretch 
-    working_directory: ~/repo
-    steps:
-      - checkout
-
-      # Download and cache dependencies
-      - restore_cache:
-          keys:
-            - v1-dependencies-{{ checksum "./flask_app/requirements.txt" }}
-            # fallback to using the latest cache if no exact match is found
-            - v1-dependencies-
-      - run:
-          name: install dependencies
-          command: |
-            cd ./flask_app/
-            python3 -m venv venv
-            . venv/bin/activate
-            make install
-            # Install hadolint
-            wget -O /bin/hadolint https://github.com/hadolint/hadolint/releases/download/v1.16.3/hadolint-Linux-x86_64 &&\
-            chmod +x /bin/hadolint
-      - save_cache:
-          paths:
-            - ./venv
-          key: v1-dependencies-{{ checksum "./flask_app/requirements.txt" }}
-      - run:
-          name: run lint
-          command: |
-            cd ./flask_app/
-            . venv/bin/activate
-            make lint
-
-  build-frontend:
-    docker:
-      # Use the same Node base as ./client/Dockerfile
-      - image: cimg/node:14.19.0
-    steps:
-      - checkout
-      - restore_cache:
-          key: frontend-build-{{ checksum "./client/package-lock.json" }}
-      - run:
-          name: Build front-end
-          command: |
-            cd ./client
-            sudo npm install
-            npm run build
-      - save_cache:
-          paths: [./frontend/node_modules]
-          key: frontend-build-{{ checksum "./client/package-lock.json" }}
-
-  test-frontend:
-    docker:
-      # Use the same Node base as ./client/Dockerfile
-      - image: cimg/node:14.19.0
-    steps:
-      - checkout
-      - restore_cache:
-          key: frontend-build-{{ checksum "./client/package-lock.json" }}
-      - run:
-          name: Test front-end
-          command: |
-            cd ./client
-            sudo npm install
-            npm run test
-
-  eslint-frontend:
-    docker:
-      # Use the same Node base as ./client/Dockerfile
-      - image: cimg/node:14.19.0
-    steps:
-      - checkout
-      - restore_cache:
-          key: frontend-build-{{ checksum "./client/package-lock.json" }}
-      - run:
-          name: Eslint front-end
-          command: |
-            cd ./client
-            sudo npm install
-            npm run lint
-
-  deploy-infrastructure:
+orbs:
+  aws-eks: circleci/aws-eks@1.0.0
+  kubernetes: circleci/kubernetes@0.11.1
+  
+jobs:
+  build-infrastructure:
     docker:
       - image: amazon/aws-cli
+    parameters:
+      cluster-role-name:
+        description: |
+          Name of IAM Role
+        type: string
     steps:
       - checkout
       - run:
-          name: Ensure web-app infrastructure exist
+          name: Ensure VPC exist
           command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/infrastructure.yml \
-              --tags project=currency-exchange \
-              --stack-name stack-create-${CIRCLE_WORKFLOW_ID:0:7} \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+            aws ec2 \
+              --output text \
+              --query 'Vpcs[*].{VpcId:VpcId,Name:Tags[?Key==`Name`].Value|[0],CidrBlock:CidrBlock}' \
+              describe-vpcs
       - run:
-          name: Add web-app ip to ansible inventory
+          name: Ensure IAM Roles exist
           command: |
-            aws cloudformation \
-            list-exports \
-            --query "Exports[?Name==\`currency-exchange-${CIRCLE_WORKFLOW_ID:0:7}\`].Value" \
-            --output text >> ~/project/.circleci/ansible/inventory.txt
+            aws iam get-role \
+              --role-name << parameters.cluster-role-name >>
 
-            echo "List Inventory:"
-            cat ~/project/.circleci/ansible/inventory.txt
-            echo "End!!!"
+  # create-cluster is done by orbs
+  test-cluster:
+    executor: aws-eks/python3
+    parameters:
+      cluster-name:
+        description: |
+          Name of the EKS cluster
+        type: string
+    steps:
+      - kubernetes/install
+      - aws-eks/update-kubeconfig-with-authenticator:
+          cluster-name: << parameters.cluster-name >>
       - run:
-          name: Installing Tar
-          command: yum install -y tar gzip
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/.circleci/ansible/inventory.txt
-          
+          command: |
+            kubectl get services
+          name: Test cluster
+
 workflows:
-  version: 2
-  default:
+  deployment:
     jobs:
-      - build-backend
-      - build-frontend
-      - test-frontend:
-          requires:
-            - build-frontend
-      - eslint-frontend:
-          requires:
-            - build-frontend
-      - deploy-infrastructure:
-          requires: [test-frontend, eslint-frontend, build-backend]
-          filters:
-            branches:
-              only: [test-infra]
+      - build-infrastructure:
+          cluster-role-name: $IAM_ROLE_NAME
+      # - aws-eks/create-cluster:
+      #     cluster-name: demo-cluster-01
+      #     cfn-role-arn: $IAM_ROLE_ARN
+      # - test-cluster:
+      #     cluster-name: demo-cluster-01
+      #     requires:
+      #       - aws-eks/create-cluster
