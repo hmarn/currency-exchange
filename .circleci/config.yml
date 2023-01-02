@@ -51,7 +51,6 @@ workflows:
       - build-infrastructure:
           cluster-role-name: $IAM_ROLE_NAME
       - aws-eks/create-cluster:
-          cfn-role-arn: $IAM_ROLE_ARN
           cluster-name: demo-cluster-01
 
       # - test-cluster:
