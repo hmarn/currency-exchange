@@ -50,9 +50,9 @@ workflows:
     jobs:
       - build-infrastructure:
           cluster-role-name: $IAM_ROLE_NAME
-      # - aws-eks/create-cluster:
-      #     cluster-name: demo-cluster-01
-      #     cfn-role-arn: $IAM_ROLE_ARN
+      - aws-eks/create-cluster:
+          cluster-name: demo-cluster-01
+          cfn-role-arn: $IAM_ROLE_ARN
       # - test-cluster:
       #     cluster-name: demo-cluster-01
       #     requires:
