@@ -8,8 +8,8 @@ const CurrencyTable = (props) => {
   return (
     <div>
       <Row>
-        <Col md={3} xs={1} />
-        <Col md={5} xs={1} className='currencyRateTableWrap'>
+        <Col md={3} s={12} />
+        <Col md={5} s={12} className='currencyRateTableWrap'>
           <Table striped hover className='currencyRateTable'>
             <thead>
               <tr>
@@ -29,7 +29,7 @@ const CurrencyTable = (props) => {
             </tbody>
           </Table>
         </Col>
-        <Col md={3} xs={1} />
+        <Col md={3} s={12} />
       </Row>
     </div>
   );

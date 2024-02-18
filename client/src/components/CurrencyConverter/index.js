@@ -66,14 +66,14 @@ const CurrencyConverter = (props) => {
   return (
     <div className='converterBox'>
       <Row className='converterRow'>
-        <Col md={12} xs={1}>
+        <Col md={12} s={12}>
           <p className='dataInfo'>Updated at: <b>{ updatedDate }</b> </p>
         </Col>
       </Row>
 
       <Row className='converterRow'>
-        <Col md={4} xs={1}>
-          <h3> FROM </h3>
+        <Col md={4} s={12}>
+          <h4> FROM </h4>
           <SelectBox
             label='Host Currency'
             options={currencyCodes}
@@ -83,8 +83,8 @@ const CurrencyConverter = (props) => {
           />
           <input className='inputBox form-control' type='number' onChange={handleOnChangeHostAmount} value={hostAmount} />
         </Col>
-        <Col md={4} xs={1}>
-          <h3> TO </h3>
+        <Col md={4} s={12}>
+          <h4> TO </h4>
           <SelectBox
             label='Destination Currency'
             options={currencyCodes}
